@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { Inter } from 'next/font/google';
+import FileUploader from '@/components/FileUploader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,9 +17,7 @@ export default function Home() {
         <div>b</div>
       </header>
       <main>
-        <div>
-          <button type='button'>選擇檔案</button>
-        </div>
+        <FileUploader />
       </main>
     </>
   );

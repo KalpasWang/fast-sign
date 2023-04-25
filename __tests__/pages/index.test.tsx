@@ -12,4 +12,6 @@ describe('Home', () => {
 
     expect(heading).toBeInTheDocument();
   });
+
+  it('上傳符合格式的檔案會跳到 upload 頁面', async () => {});
 });
