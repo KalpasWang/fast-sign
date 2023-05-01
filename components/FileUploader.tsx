@@ -1,14 +1,21 @@
 import React, { ChangeEvent } from 'react';
 
 type Props = {
-  onUpload?: (file: File) => void;
+  onUpload?: (blob: ArrayBuffer) => void;
 };
 
 export default function FileUploader({ onUpload }: Props) {
   function changeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target?.files?.[0];
-    if (file && onUpload) {
-      onUpload(file);
+    if (file && file?.type === 'application/pdf') {
+      console.log(file);
+      const fileReader = new FileReader();
+      fileReader.addEventListener('load', function (e) {
+        console.log(e);
+        if (this.result instanceof ArrayBuffer && onUpload) {
+          onUpload(this.result);
+        }
+      });
     }
   }
 

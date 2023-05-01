@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import FileUploader from '@/components/FileUploader';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { getDocument } from 'pdfjs-dist';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,8 +12,9 @@ export default function Home() {
   const [uploaded, setUploaded] = useState(false);
   const router = useRouter();
 
-  function uploadHandler(file: File) {
-    console.log(file);
+  async function uploadHandler(blob: ArrayBuffer) {
+    const doc = getDocument(blob).promise;
+    console.log(doc);
     setUploaded(true);
   }
 
