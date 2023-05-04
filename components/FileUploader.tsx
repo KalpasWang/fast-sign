@@ -8,13 +8,13 @@ export default function FileUploader({ onUpload }: Props) {
   function changeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target?.files?.[0];
     if (file && file?.type === 'application/pdf') {
-      console.log(file);
       const fileReader = new FileReader();
-      fileReader.addEventListener('load', function (e) {
-        console.log(e);
-        if (this.result instanceof ArrayBuffer && onUpload) {
-          onUpload(this.result);
+      fileReader.readAsArrayBuffer(file);
+      fileReader.addEventListener('loadend', function (e) {
+        if (!onUpload || !(e.target?.result instanceof ArrayBuffer)) {
+          return;
         }
+        onUpload(e.target.result);
       });
     }
   }

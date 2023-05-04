@@ -4,26 +4,30 @@ import { Inter } from 'next/font/google';
 import FileUploader from '@/components/FileUploader';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { getDocument } from 'pdfjs-dist';
+import * as pdfjs from 'pdfjs-dist';
+import worker from 'pdfjs-dist/build/pdf.worker.entry';
+import { useAppDispatch } from '../store/hooks';
+import { saveUploadedFile } from '@/features/signatureSlice';
 
 const inter = Inter({ subsets: ['latin'] });
+pdfjs.GlobalWorkerOptions.workerSrc = worker;
 
 export default function Home() {
-  const [uploaded, setUploaded] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(false);
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   async function uploadHandler(blob: ArrayBuffer) {
-    const doc = getDocument(blob).promise;
-    console.log(doc);
-    setUploaded(true);
+    dispatch(saveUploadedFile(blob));
+    setIsUploaded(true);
   }
 
   // 上傳成功跳轉到 sign-flow
   useEffect(() => {
-    if (uploaded) {
+    if (isUploaded) {
       router.push('/sign-flow');
     }
-  }, [uploaded, router]);
+  }, [isUploaded, router]);
 
   return (
     <>
@@ -36,7 +40,7 @@ export default function Home() {
         <div>b</div>
       </header>
       <main>
-        {uploaded && <p>上傳成功</p>}
+        {isUploaded && <p>上傳成功</p>}
         <FileUploader onUpload={uploadHandler} />
       </main>
     </>

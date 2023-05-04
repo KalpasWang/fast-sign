@@ -1,4 +1,4 @@
-import { RootState } from '@/store';
+import { RootState } from '@/store/store';
 import { createSlice } from '@reduxjs/toolkit';
 
 const DEFAULT_STEP = 1;

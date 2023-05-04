@@ -1,9 +1,10 @@
-import { RootState } from '@/store';
-import { createSlice } from '@reduxjs/toolkit';
+import { RootState } from '@/store/store';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
+type FileType = ArrayBuffer | null;
 // signature state type
 export interface SignatureState {
-  rawFile: File | null;
+  rawFile: FileType;
 }
 
 const initialState: SignatureState = {
@@ -13,10 +14,14 @@ const initialState: SignatureState = {
 export const signatureSlice = createSlice({
   name: 'signature',
   initialState,
-  reducers: {},
+  reducers: {
+    saveUploadedFile: (state, action: PayloadAction<FileType>) => {
+      return { ...state, rawFile: action.payload };
+    },
+  },
 });
 
-// export const { goNextStep, goPreviousStep, reset } = progressSlice.actions;
+export const { saveUploadedFile } = signatureSlice.actions;
 
 export const selectRawFile = (state: RootState) => state.signature.rawFile;
 
