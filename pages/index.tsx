@@ -17,8 +17,8 @@ export default function Home() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  async function uploadHandler(blob: ArrayBuffer) {
-    dispatch(saveUploadedFile(blob));
+  async function uploadHandler(data: Uint8Array) {
+    dispatch(saveUploadedFile(data));
     setIsUploaded(true);
   }
 

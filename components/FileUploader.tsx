@@ -1,7 +1,7 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 
 type Props = {
-  onUpload?: (blob: ArrayBuffer) => void;
+  onUpload?: (data: Uint8Array) => void;
 };
 
 export default function FileUploader({ onUpload }: Props) {
@@ -14,7 +14,7 @@ export default function FileUploader({ onUpload }: Props) {
         if (!onUpload || !(e.target?.result instanceof ArrayBuffer)) {
           return;
         }
-        onUpload(e.target.result);
+        onUpload(new Uint8Array(e.target.result));
       });
     }
   }

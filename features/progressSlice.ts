@@ -1,14 +1,14 @@
 import { RootState } from '@/store/store';
 import { createSlice } from '@reduxjs/toolkit';
 
-const DEFAULT_STEP = 1;
+const DEFAULT_STEP = 2;
 
 // progress state type
 export interface ProgressState {
   currentStep: number;
 }
 
-const initialState: ProgressState = {
+export const initialState: ProgressState = {
   currentStep: DEFAULT_STEP,
 };
 

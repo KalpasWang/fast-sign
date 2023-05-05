@@ -1,7 +1,7 @@
 import { RootState } from '@/store/store';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-type FileType = ArrayBuffer | null;
+type FileType = Uint8Array | null;
 // signature state type
 export interface SignatureState {
   rawFile: FileType;

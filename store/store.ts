@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { PreloadedState, configureStore } from '@reduxjs/toolkit';
 import progressReducer from '../features/progressSlice';
 import signatureReducer from '../features/signatureSlice';
 
@@ -11,3 +11,13 @@ export const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
+
+export const setupTestStore = (preloadedState?: PreloadedState<RootState>) => {
+  return configureStore({
+    reducer: {
+      progress: progressReducer,
+      signature: signatureReducer,
+    },
+    preloadedState,
+  });
+};
