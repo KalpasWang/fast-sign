@@ -4,8 +4,18 @@ import '@testing-library/jest-dom';
 import { setupTestStore, store } from '@/store/store';
 import { Provider } from 'react-redux';
 import { PDFDocument } from 'pdf-lib';
-import { saveUploadedFile } from '@/features/signatureSlice';
 import { initialState as progressInitialState } from '@/features/progressSlice';
+import { toBase64 } from '@/utils/base64';
+
+// mock useRouter().push method
+const pushMock = jest.fn();
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      push: pushMock,
+    };
+  },
+}));
 
 describe('Home', () => {
   it('渲染 store 中的 pdf 檔案到 canvas', async () => {
@@ -19,7 +29,7 @@ describe('Home', () => {
     // use generated pdf file to setup store
     const testStore = setupTestStore({
       progress: progressInitialState,
-      signature: { rawFile: pdfBytes },
+      signature: { rawFile: toBase64(pdfBytes) },
     });
     render(
       <Provider store={testStore}>
@@ -31,5 +41,14 @@ describe('Home', () => {
     expect(canvas.toDataURL()).toContain('data:application/pdf;base64');
   });
 
-  it('', async () => {});
+  it('沒有 rawFile 會跳轉回首頁', async () => {
+    const testStore = setupTestStore();
+    render(
+      <Provider store={testStore}>
+        <SignFlow />
+      </Provider>
+    );
+
+    expect(pushMock).toHaveBeenCalledWith('/');
+  });
 });

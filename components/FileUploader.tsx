@@ -1,7 +1,8 @@
 import React from 'react';
+import { toBase64 } from '@/utils/base64';
 
 type Props = {
-  onUpload?: (data: Uint8Array) => void;
+  onUpload?: (data: string) => void;
 };
 
 export default function FileUploader({ onUpload }: Props) {
@@ -14,7 +15,8 @@ export default function FileUploader({ onUpload }: Props) {
         if (!onUpload || !(e.target?.result instanceof ArrayBuffer)) {
           return;
         }
-        onUpload(new Uint8Array(e.target.result));
+        const base64 = toBase64(e.target.result);
+        onUpload(base64);
       });
     }
   }

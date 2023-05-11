@@ -5,19 +5,19 @@ import FileUploader from '@/components/FileUploader';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import * as pdfjs from 'pdfjs-dist';
-import worker from 'pdfjs-dist/build/pdf.worker.entry';
+// import worker from 'pdfjs-dist/build/pdf.worker.entry';
 import { useAppDispatch } from '../store/hooks';
 import { saveUploadedFile } from '@/features/signatureSlice';
 
 const inter = Inter({ subsets: ['latin'] });
-pdfjs.GlobalWorkerOptions.workerSrc = worker;
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export default function Home() {
   const [isUploaded, setIsUploaded] = useState(false);
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  async function uploadHandler(data: Uint8Array) {
+  async function uploadHandler(data: string) {
     dispatch(saveUploadedFile(data));
     setIsUploaded(true);
   }
