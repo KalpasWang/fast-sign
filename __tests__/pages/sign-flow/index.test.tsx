@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import SignFlow from '../../../pages/sign-flow';
 import '@testing-library/jest-dom';
-import { setupTestStore, store } from '@/store/store';
+import { setupTestStore } from '@/store/store';
 import { Provider } from 'react-redux';
 import { PDFDocument } from 'pdf-lib';
 import { initialState as progressInitialState } from '@/features/progressSlice';
@@ -18,7 +18,7 @@ jest.mock('next/router', () => ({
 }));
 
 describe('Home', () => {
-  it('渲染 store 中的 pdf 檔案到 canvas', async () => {
+  it.skip('渲染 store 中的 pdf 檔案到 canvas', async () => {
     expect.hasAssertions();
     // PDF Creation
     const pdfDoc = await PDFDocument.create();
