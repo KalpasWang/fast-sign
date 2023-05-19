@@ -30,6 +30,7 @@ function FileViewer({ file }: Props) {
       canvasContext: canvasForPdf.getContext('2d')!,
       viewport,
     }).promise;
+    console.log(canvasForPdf.toDataURL());
 
     const imageScale = 1 / window.devicePixelRatio;
     const pdfImage = new fabric.Image(canvasForPdf, {
@@ -71,7 +72,7 @@ function FileViewer({ file }: Props) {
 
   return (
     <div>
-      <canvas id='canvas' />
+      <canvas id='canvas' role='img' title='PDF Viewer' />
       <div>
         <button
           type='button'

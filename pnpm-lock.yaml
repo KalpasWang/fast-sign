@@ -29,8 +29,8 @@ dependencies:
     specifier: ^1.17.1
     version: 1.17.1
   pdfjs-dist:
-    specifier: ^3.5.141
-    version: 3.5.141
+    specifier: ^2.16.105
+    version: 2.16.105
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -4094,11 +4094,6 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
-  /path2d-polyfill@2.0.1:
-    resolution: {integrity: sha512-ad/3bsalbbWhmBo0D6FZ4RNMwsLsPpL6gnvhuSaU5Vm7b06Kr5ubSltQQ0T7YKsiJQO+g22zJ4dJKNTXIyOXtA==}
-    engines: {node: '>=8'}
-    dev: false
-
   /pdf-lib@1.17.1:
     resolution: {integrity: sha512-V/mpyJAoTsN4cnP31vc0wfNA1+p20evqqnap0KLoRUN0Yk/p3wN52DOEsL4oBFcLdb76hlpKPtzJIgo67j/XLw==}
     dependencies:
@@ -4118,19 +4113,6 @@ packages:
     dependencies:
       dommatrix: 1.0.3
       web-streams-polyfill: 3.2.1
-
-  /pdfjs-dist@3.5.141:
-    resolution: {integrity: sha512-lYIvyi5grtYOIatsfCifIKwxHeAJ8eHyP22DTdvY4pm0yWVSFQnMafpgCPSw8gaNRDDdcHnBVOkqMsyK8SRxZg==}
-    engines: {node: '>=16'}
-    dependencies:
-      path2d-polyfill: 2.0.1
-      web-streams-polyfill: 3.2.1
-    optionalDependencies:
-      canvas: 2.11.2
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-    dev: false
 
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
