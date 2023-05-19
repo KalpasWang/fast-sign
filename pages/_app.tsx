@@ -9,5 +9,10 @@ export default function App({ Component, pageProps }: AppProps) {
       <Component {...pageProps} />
     </Provider>
   );
-  // return <Component {...pageProps} />
+}
+
+declare global {
+  interface Window {
+    draggedImage?: HTMLImageElement;
+  }
 }

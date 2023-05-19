@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as pdfjs from 'pdfjs-dist';
 import { fabric } from 'fabric';
+import styled from 'styled-components';
 
 type Props = {
   file?: Uint8Array;
@@ -12,6 +13,17 @@ function FileViewer({ file }: Props) {
   const [totalPages, setTotalPages] = useState(1);
   const fabricRef = useRef<fabric.Canvas>();
   // const isRendering = useRef(false);
+
+  const loadSignatureImage = useCallback((e: fabric.IEvent<MouseEvent>) => {
+    if (!window.draggedImage) return;
+
+    const imageScale = 1 / window.devicePixelRatio;
+    const image = new fabric.Image(window.draggedImage, {
+      scaleX: imageScale,
+      scaleY: imageScale,
+    });
+    fabricRef.current?.add(image);
+  }, []);
 
   const renderPDF = useCallback(async () => {
     if (!pdfDoc) return;
@@ -30,7 +42,6 @@ function FileViewer({ file }: Props) {
       canvasContext: canvasForPdf.getContext('2d')!,
       viewport,
     }).promise;
-    console.log(canvasForPdf.toDataURL());
 
     const imageScale = 1 / window.devicePixelRatio;
     const pdfImage = new fabric.Image(canvasForPdf, {
@@ -44,7 +55,8 @@ function FileViewer({ file }: Props) {
       pdfImage,
       fabricRef.current?.renderAll.bind(fabricRef.current)
     );
-  }, [pdfDoc, pageNum]);
+    fabricRef.current.on('drop', loadSignatureImage);
+  }, [pdfDoc, pageNum, loadSignatureImage]);
 
   /* if has file, get pdf document and total pages number */
   useEffect(() => {
@@ -71,8 +83,10 @@ function FileViewer({ file }: Props) {
   }, [pageNum, pdfDoc, renderPDF]);
 
   return (
-    <div>
-      <canvas id='canvas' role='img' title='PDF Viewer' />
+    <Container>
+      <FileViewerContainer>
+        <canvas id='canvas' role='img' title='PDF Viewer' />
+      </FileViewerContainer>
       <div>
         <button
           type='button'
@@ -96,8 +110,16 @@ function FileViewer({ file }: Props) {
           下一頁
         </button>
       </div>
-    </div>
+    </Container>
   );
 }
 
 export default FileViewer;
+
+const Container = styled.div`
+  height: 100%;
+`;
+
+const FileViewerContainer = styled.div`
+  overflow: auto;
+`;

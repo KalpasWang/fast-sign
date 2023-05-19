@@ -36,6 +36,12 @@ export default function SignatureDrawer({}: Props) {
     fabricRef.current.freeDrawingBrush.color = '#000';
   }, []);
 
+  const storeImage = useCallback((e: React.DragEvent<HTMLImageElement>) => {
+    if (e.target instanceof HTMLImageElement) {
+      window.draggedImage = e.target;
+    }
+  }, []);
+
   return (
     <Container ref={containerRef}>
       <button type='button' onClick={() => setIsShowingCanvas(true)}>
@@ -57,7 +63,14 @@ export default function SignatureDrawer({}: Props) {
       {previewUrl && (
         <ul style={{ listStyle: 'none' }}>
           <li>
-            <Image src={previewUrl} alt='簽名檔' width={200} height={100} />
+            <Image
+              src={previewUrl}
+              alt='簽名檔'
+              width={200}
+              height={100}
+              draggable
+              onDragStart={storeImage}
+            />
           </li>
         </ul>
       )}
