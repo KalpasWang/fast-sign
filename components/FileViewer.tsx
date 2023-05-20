@@ -17,10 +17,13 @@ function FileViewer({ file }: Props) {
   const loadSignatureImage = useCallback((e: fabric.IEvent<MouseEvent>) => {
     if (!window.draggedImage) return;
 
+    const { offsetX, offsetY } = e.e;
     const imageScale = 1 / window.devicePixelRatio;
     const image = new fabric.Image(window.draggedImage, {
       scaleX: imageScale,
       scaleY: imageScale,
+      top: offsetY - (window.draggedImage.height * imageScale) / 2,
+      left: offsetX - (window.draggedImage.width * imageScale) / 2,
     });
     fabricRef.current?.add(image);
   }, []);
@@ -29,33 +32,34 @@ function FileViewer({ file }: Props) {
     if (!pdfDoc) return;
 
     const page = await pdfDoc.getPage(pageNum);
-    const viewport = page.getViewport({ scale: 1 });
 
-    if (!fabricRef.current) {
-      fabricRef.current = new fabric.Canvas('canvas', {
-        width: viewport.width,
-        height: viewport.height,
-      });
-      fabricRef.current.on('drop', loadSignatureImage);
-    }
-
+    // 把 pdf 渲染到 virtual canvas
     const canvasForPdf = document.createElement('canvas') as HTMLCanvasElement;
+    const viewport = page.getViewport({ scale: 1 });
     canvasForPdf.width = viewport.width;
     canvasForPdf.height = viewport.height;
-
     await page.render({
       canvasContext: canvasForPdf.getContext('2d')!,
       viewport,
     }).promise;
 
+    // 將 virtial canvas 轉成 fabric image
     const imageScale = 1 / window.devicePixelRatio;
     const pdfImage = new fabric.Image(canvasForPdf, {
       scaleX: imageScale,
       scaleY: imageScale,
     });
-
     pdfImage.hasControls = false;
     pdfImage.hasBorders = false;
+
+    // 將 fabric image 加到 canvas
+    if (!fabricRef.current) {
+      fabricRef.current = new fabric.Canvas('canvas', {
+        width: pdfImage.width,
+        height: pdfImage.height,
+      });
+      fabricRef.current.on('drop', loadSignatureImage);
+    }
     fabricRef.current.setBackgroundImage(
       pdfImage,
       fabricRef.current?.renderAll.bind(fabricRef.current)
