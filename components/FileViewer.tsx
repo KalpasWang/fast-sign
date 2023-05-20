@@ -31,13 +31,18 @@ function FileViewer({ file }: Props) {
     const page = await pdfDoc.getPage(pageNum);
     const viewport = page.getViewport({ scale: 1 });
 
-    fabricRef.current = new fabric.Canvas('canvas', {
-      width: viewport.width,
-      height: viewport.height,
-    });
+    if (!fabricRef.current) {
+      fabricRef.current = new fabric.Canvas('canvas', {
+        width: viewport.width,
+        height: viewport.height,
+      });
+      fabricRef.current.on('drop', loadSignatureImage);
+    }
+
     const canvasForPdf = document.createElement('canvas') as HTMLCanvasElement;
     canvasForPdf.width = viewport.width;
     canvasForPdf.height = viewport.height;
+
     await page.render({
       canvasContext: canvasForPdf.getContext('2d')!,
       viewport,
@@ -55,7 +60,6 @@ function FileViewer({ file }: Props) {
       pdfImage,
       fabricRef.current?.renderAll.bind(fabricRef.current)
     );
-    fabricRef.current.on('drop', loadSignatureImage);
   }, [pdfDoc, pageNum, loadSignatureImage]);
 
   /* if has file, get pdf document and total pages number */
