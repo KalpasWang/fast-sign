@@ -3,7 +3,7 @@ import { PDFDocument } from 'pdf-lib';
 import FileViewer from '@/components/FileViewer';
 
 describe('FileViewer', () => {
-  it.skip('渲染 store 中的 pdf 檔案到 canvas', async () => {
+  it('渲染 store 中的 pdf 檔案到 canvas', async () => {
     expect.hasAssertions();
     // PDF Creation
     const pdfDoc = await PDFDocument.create();
