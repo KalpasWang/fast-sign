@@ -35,7 +35,7 @@ function FileViewer({ file }: Props) {
 
     // 把 pdf 渲染到 virtual canvas
     const canvasForPdf = document.createElement('canvas') as HTMLCanvasElement;
-    const viewport = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: window.devicePixelRatio });
     canvasForPdf.width = viewport.width;
     canvasForPdf.height = viewport.height;
     await page.render({
@@ -60,6 +60,7 @@ function FileViewer({ file }: Props) {
       });
       fabricRef.current.on('drop', loadSignatureImage);
     }
+    fabricRef.current.setZoom(pdfImage.scaleX ? 1 / pdfImage.scaleX : 1);
     fabricRef.current.setBackgroundImage(
       pdfImage,
       fabricRef.current?.renderAll.bind(fabricRef.current)
