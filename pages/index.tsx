@@ -5,11 +5,14 @@ import FileUploader from '@/components/FileUploader';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import * as pdfjs from 'pdfjs-dist';
-// import worker from 'pdfjs-dist/build/pdf.worker.entry';
+import * as legacyPdfjs from 'pdfjs-dist/legacy/build/pdf';
 import { useAppDispatch } from '../store/hooks';
 import { saveUploadedFile } from '@/features/signatureSlice';
 
 const inter = Inter({ subsets: ['latin'] });
+
+legacyPdfjs.GlobalWorkerOptions.workerSrc =
+  '//mozilla.github.io/pdf.js/legacy/build/pdf.worker.js';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export default function Home() {

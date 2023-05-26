@@ -25,6 +25,7 @@ export default function Document() {
       </Head>
       <body>
         <Main />
+        <div id='dialog'></div>
         <NextScript />
       </body>
     </Html>

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as pdfjs from 'pdfjs-dist';
+import * as legacyPdfjs from 'pdfjs-dist/legacy/build/pdf';
 import { fabric } from 'fabric';
 import styled from 'styled-components';
 
@@ -31,40 +32,46 @@ function FileViewer({ file }: Props) {
   const renderPDF = useCallback(async () => {
     if (!pdfDoc) return;
 
-    const page = await pdfDoc.getPage(pageNum);
+    try {
+      const page = await pdfDoc.getPage(pageNum);
 
-    // 把 pdf 渲染到 virtual canvas
-    const canvasForPdf = document.createElement('canvas') as HTMLCanvasElement;
-    const viewport = page.getViewport({ scale: window.devicePixelRatio });
-    canvasForPdf.width = viewport.width;
-    canvasForPdf.height = viewport.height;
-    await page.render({
-      canvasContext: canvasForPdf.getContext('2d')!,
-      viewport,
-    }).promise;
+      // 把 pdf 渲染到 virtual canvas
+      const canvasForPdf = document.createElement(
+        'canvas'
+      ) as HTMLCanvasElement;
+      const viewport = page.getViewport({ scale: window.devicePixelRatio });
+      canvasForPdf.width = viewport.width;
+      canvasForPdf.height = viewport.height;
+      await page.render({
+        canvasContext: canvasForPdf.getContext('2d')!,
+        viewport,
+      }).promise;
 
-    // 將 virtial canvas 轉成 fabric image
-    const imageScale = 1 / window.devicePixelRatio;
-    const pdfImage = new fabric.Image(canvasForPdf, {
-      scaleX: imageScale,
-      scaleY: imageScale,
-    });
-    pdfImage.hasControls = false;
-    pdfImage.hasBorders = false;
-
-    // 將 fabric image 加到 canvas
-    if (!fabricRef.current) {
-      fabricRef.current = new fabric.Canvas('canvas', {
-        width: pdfImage.width,
-        height: pdfImage.height,
+      // 將 virtial canvas 轉成 fabric image
+      const imageScale = 1 / window.devicePixelRatio;
+      const pdfImage = new fabric.Image(canvasForPdf, {
+        scaleX: imageScale,
+        scaleY: imageScale,
       });
-      fabricRef.current.on('drop', loadSignatureImage);
+      pdfImage.hasControls = false;
+      pdfImage.hasBorders = false;
+
+      // 將 fabric image 加到 canvas
+      if (!fabricRef.current) {
+        fabricRef.current = new fabric.Canvas('canvas', {
+          width: pdfImage.width,
+          height: pdfImage.height,
+        });
+        fabricRef.current.on('drop', loadSignatureImage);
+      }
+      fabricRef.current.setZoom(pdfImage.scaleX ? 1 / pdfImage.scaleX : 1);
+      fabricRef.current.setBackgroundImage(
+        pdfImage,
+        fabricRef.current?.renderAll.bind(fabricRef.current)
+      );
+    } catch (error) {
+      console.error(error);
     }
-    fabricRef.current.setZoom(pdfImage.scaleX ? 1 / pdfImage.scaleX : 1);
-    fabricRef.current.setBackgroundImage(
-      pdfImage,
-      fabricRef.current?.renderAll.bind(fabricRef.current)
-    );
   }, [pdfDoc, pageNum, loadSignatureImage]);
 
   /* if has file, get pdf document and total pages number */
@@ -72,15 +79,30 @@ function FileViewer({ file }: Props) {
     if (!file) {
       return;
     }
-
-    pdfjs.getDocument(file).promise.then((pdf) => {
-      if (pdfDoc) {
-        pdfDoc.destroy();
-      }
-      setPdfDoc(pdf);
-      setTotalPages(pdf.numPages);
-      setPageNum(1);
-    });
+    let pdflib = pdfjs;
+    let doc;
+    if (process.env.NEXT_PUBLIC_TESTING) {
+      pdflib = legacyPdfjs;
+      doc = pdflib.getDocument({
+        data: file,
+        standardFontDataUrl:
+          '//cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/standard_fonts/',
+      });
+    } else {
+      doc = pdflib.getDocument(file);
+    }
+    doc.promise
+      .then((pdf) => {
+        if (pdfDoc) {
+          pdfDoc.destroy();
+        }
+        setPdfDoc(pdf);
+        setTotalPages(pdf.numPages);
+        setPageNum(1);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file]);
 

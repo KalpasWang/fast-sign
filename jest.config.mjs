@@ -15,9 +15,9 @@ const config = {
 
   // testEnvironment: 'jest-environment-jsdom',
   testEnvironment: './FixJSDOMEnvironment.ts',
-  // globals: {
-  //   structuredClone: structuredClone,
-  // },
+  globals: {
+    // __TEST__: true,
+  },
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { fromBase64 } from '@/utils/base64';
 import FileViewer from '@/components/FileViewer';
 import SignatureDrawer from '@/components/SignatureDrawer';
+import Dialog from '@/components/Dialog';
 
 type Props = {};
 
@@ -12,11 +13,7 @@ export default function SignFlow({}: Props) {
   const router = useRouter();
   const rawFile = useAppSelector((state) => state.signature.rawFile);
   const [decodedFile, setDecodedFile] = useState<Uint8Array>();
-  const modalRef = useRef<HTMLDialogElement>(null);
-
-  const showConfirmModal = useCallback(() => {
-    modalRef.current?.showModal();
-  }, []);
+  const [showingModal, setShowingModal] = useState(false);
 
   /* if has rawFile, decode string to UInt8Array */
   useEffect(() => {
@@ -38,23 +35,27 @@ export default function SignFlow({}: Props) {
       <SignatureContainer>
         <SignatureDrawer />
         <div>
-          <button type='button' onClick={showConfirmModal}>
+          <button type='button' onClick={() => setShowingModal(true)}>
             下一步
           </button>
         </div>
       </SignatureContainer>
-      <dialog ref={modalRef}>
-        <h2>請確認您的檔案</h2>
-        <p>確認後將無法修改</p>
-        <form method='dialog'>
-          <button type='button' onClick={() => router.push('/download')}>
-            確認
-          </button>
-          <button type='button' value='cancel' formMethod='dialog'>
-            返回
-          </button>
-        </form>
-      </dialog>
+      {showingModal && (
+        <Dialog>
+          <DialogContentContainer>
+            <h2>請確認您的檔案</h2>
+            <p>確認後將無法修改</p>
+            <div>
+              <button type='button' onClick={() => router.push('/download')}>
+                確認
+              </button>
+              <button type='button' onClick={() => setShowingModal(false)}>
+                返回
+              </button>
+            </div>
+          </DialogContentContainer>
+        </Dialog>
+      )}
     </Container>
   );
 }
@@ -74,4 +75,12 @@ const ViewerContainer = styled.div`
 const SignatureContainer = styled.div`
   height: 100%;
   flex-basis: 50%;
+`;
+
+const DialogContentContainer = styled.div`
+  width: 75%;
+  max-width: 30rem;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 20px;
 `;

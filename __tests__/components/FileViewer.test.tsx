@@ -1,18 +1,16 @@
 import { render, screen } from '@testing-library/react';
-import { PDFDocument } from 'pdf-lib';
 import FileViewer from '@/components/FileViewer';
+import { samplePdf, samplePdfDataUrl } from '@/utils/samplePDF';
 
 describe('FileViewer', () => {
   it('渲染 store 中的 pdf 檔案到 canvas', async () => {
     expect.hasAssertions();
-    // PDF Creation
-    const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage();
-    page.drawText('Sample');
-    const pdfBytes = await pdfDoc.save();
-    render(<FileViewer file={pdfBytes} />);
+    render(<FileViewer file={samplePdf} />);
 
-    const canvas = screen.getByRole('canvas') as HTMLCanvasElement;
+    const canvas = screen.getByRole('img', {
+      name: /pdf viewer/i,
+    }) as HTMLCanvasElement;
     expect(canvas.toDataURL()).toContain('data:image/png;base64');
+    expect(canvas.toDataURL()).toBe(samplePdfDataUrl);
   });
 });
