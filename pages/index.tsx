@@ -4,16 +4,13 @@ import { Inter } from 'next/font/google';
 import FileUploader from '@/components/FileUploader';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import * as pdfjs from 'pdfjs-dist';
-import * as legacyPdfjs from 'pdfjs-dist/legacy/build/pdf';
+import * as pdfjs from 'pdfjs-dist/legacy/build/pdf';
 import { useAppDispatch } from '../store/hooks';
 import { saveUploadedFile } from '@/features/signatureSlice';
 
 const inter = Inter({ subsets: ['latin'] });
 
-legacyPdfjs.GlobalWorkerOptions.workerSrc =
-  '//mozilla.github.io/pdf.js/legacy/build/pdf.worker.js';
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.js`;
 
 export default function Home() {
   const [isUploaded, setIsUploaded] = useState(false);

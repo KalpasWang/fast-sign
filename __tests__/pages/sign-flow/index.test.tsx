@@ -1,12 +1,13 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import user from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import SignFlow from '../../../pages/sign-flow';
 import { setupTestStore } from '@/store/store';
 import { initialState as progressInitialState } from '@/features/progressSlice';
 import { toBase64 } from '@/utils/base64';
 import { samplePdf } from '@/utils/samplePDF';
+import { selectSignedFile } from '@/features/signatureSlice';
 
 // mock useRouter().push method
 const pushMock = jest.fn();
@@ -34,24 +35,25 @@ describe('sign-flow page', () => {
     expect.hasAssertions();
     /* 準備 */
     // use default sample pdf file to setup store
+    const user = userEvent.setup();
     const testStore = setupTestStore({
       progress: progressInitialState,
-      signature: { rawFile: toBase64(samplePdf) },
+      signature: { rawFile: toBase64(samplePdf), signedFile: null },
     });
     render(
       <Provider store={testStore}>
         <SignFlow />
+        <div id='dialog'></div>
       </Provider>
     );
 
     /* 執行 */
-    const button = screen.getByRole('button', { name: /下一步/ });
-    await user.click(button);
-    await waitFor(async () => {
-      const confirmBtn = screen.getByRole('button', { name: /確認/ });
-      await user.click(confirmBtn);
-      /* 驗證 */
-      expect(pushMock).toHaveBeenCalledWith('/download');
-    });
+    const nextButton = screen.getByRole('button', { name: /下一步/ });
+    await user.click(nextButton);
+    const confirmButton = await screen.findByRole('button', { name: /確認/ });
+    await user.click(confirmButton);
+    /* 驗證 */
+    expect(pushMock).toHaveBeenCalledWith('/download');
+    expect(selectSignedFile(testStore.getState())).not.toBeNull();
   });
 });

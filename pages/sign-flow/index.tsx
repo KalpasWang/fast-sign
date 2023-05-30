@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -6,12 +6,20 @@ import { fromBase64 } from '@/utils/base64';
 import FileViewer from '@/components/FileViewer';
 import SignatureDrawer from '@/components/SignatureDrawer';
 import Dialog from '@/components/Dialog';
+import {
+  saveSignedFile,
+  selectRawFile,
+  selectSignedFile,
+} from '@/features/signatureSlice';
+import { useAppDispatch } from '@/store/hooks';
 
 type Props = {};
 
 export default function SignFlow({}: Props) {
   const router = useRouter();
-  const rawFile = useAppSelector((state) => state.signature.rawFile);
+  const rawFile = useAppSelector(selectRawFile);
+  const signedFile = useAppSelector(selectSignedFile);
+  const dispatch = useAppDispatch();
   const [decodedFile, setDecodedFile] = useState<Uint8Array>();
   const [showingModal, setShowingModal] = useState(false);
 
@@ -26,6 +34,11 @@ export default function SignFlow({}: Props) {
     setDecodedFile(decoded);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawFile]);
+
+  const handleNextStep = useCallback(() => {
+    dispatch(saveSignedFile(rawFile));
+    router.push('/download');
+  }, [rawFile, dispatch, router]);
 
   return (
     <Container>
@@ -46,7 +59,7 @@ export default function SignFlow({}: Props) {
             <h2>請確認您的檔案</h2>
             <p>確認後將無法修改</p>
             <div>
-              <button type='button' onClick={() => router.push('/download')}>
+              <button type='button' onClick={() => handleNextStep()}>
                 確認
               </button>
               <button type='button' onClick={() => setShowingModal(false)}>

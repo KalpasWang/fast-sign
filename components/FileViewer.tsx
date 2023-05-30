@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import * as pdfjs from 'pdfjs-dist';
-import * as legacyPdfjs from 'pdfjs-dist/legacy/build/pdf';
+import * as pdfjs from 'pdfjs-dist/legacy/build/pdf';
 import { fabric } from 'fabric';
 import styled from 'styled-components';
 
@@ -79,20 +78,14 @@ function FileViewer({ file }: Props) {
     if (!file) {
       return;
     }
-    let pdflib = pdfjs;
-    let doc;
-    if (process.env.NEXT_PUBLIC_TESTING) {
-      pdflib = legacyPdfjs;
-      doc = pdflib.getDocument({
+
+    pdfjs
+      .getDocument({
         data: file,
         standardFontDataUrl:
           '//cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/standard_fonts/',
-      });
-    } else {
-      doc = pdflib.getDocument(file);
-    }
-    doc.promise
-      .then((pdf) => {
+      })
+      .promise.then((pdf) => {
         if (pdfDoc) {
           pdfDoc.destroy();
         }
