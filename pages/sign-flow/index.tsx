@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -9,7 +9,7 @@ import Dialog from '@/components/Dialog';
 import {
   saveSignedFile,
   selectRawFile,
-  selectSignedFile,
+  selectSignature,
 } from '@/features/signatureSlice';
 import { useAppDispatch } from '@/store/hooks';
 
@@ -18,8 +18,7 @@ type Props = {};
 export default function SignFlow({}: Props) {
   const router = useRouter();
   const rawFile = useAppSelector(selectRawFile);
-  const signedFile = useAppSelector(selectSignedFile);
-  const dispatch = useAppDispatch();
+  const signature = useAppSelector(selectSignature);
   const [decodedFile, setDecodedFile] = useState<Uint8Array>();
   const [showingModal, setShowingModal] = useState(false);
 
@@ -36,9 +35,12 @@ export default function SignFlow({}: Props) {
   }, [rawFile]);
 
   const handleNextStep = useCallback(() => {
-    dispatch(saveSignedFile(rawFile));
+    if (!signature) {
+      console.error('signature is empty');
+      return;
+    }
     router.push('/download');
-  }, [rawFile, dispatch, router]);
+  }, [signature, router]);
 
   return (
     <Container>

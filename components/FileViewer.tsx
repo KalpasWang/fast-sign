@@ -12,21 +12,29 @@ function FileViewer({ file }: Props) {
   const [pageNum, setPageNum] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const fabricRef = useRef<fabric.Canvas>();
-  // const isRendering = useRef(false);
 
-  const loadSignatureImage = useCallback((e: fabric.IEvent<MouseEvent>) => {
-    if (!window.draggedImage) return;
-
-    const { offsetX, offsetY } = e.e;
-    const imageScale = 1 / window.devicePixelRatio;
-    const image = new fabric.Image(window.draggedImage, {
-      scaleX: imageScale,
-      scaleY: imageScale,
-      top: offsetY - (window.draggedImage.height * imageScale) / 2,
-      left: offsetX - (window.draggedImage.width * imageScale) / 2,
-    });
-    fabricRef.current?.add(image);
+  const saveSignatureImage = useCallback((e: fabric.IEvent<MouseEvent>) => {
+    console.log(e);
   }, []);
+
+  const loadSignatureImage = useCallback(
+    (e: fabric.IEvent<MouseEvent>) => {
+      if (!window.draggedImage) return;
+
+      const { offsetX, offsetY } = e.e;
+      const imageScale = 1 / window.devicePixelRatio;
+      const image = new fabric.Image(window.draggedImage, {
+        scaleX: imageScale,
+        scaleY: imageScale,
+        top: offsetY - (window.draggedImage.height * imageScale) / 2,
+        left: offsetX - (window.draggedImage.width * imageScale) / 2,
+      });
+      fabricRef.current?.on('object:added', saveSignatureImage);
+      fabricRef.current?.on('object:modified', saveSignatureImage);
+      fabricRef.current?.add(image);
+    },
+    [saveSignatureImage]
+  );
 
   const renderPDF = useCallback(async () => {
     if (!pdfDoc) return;
