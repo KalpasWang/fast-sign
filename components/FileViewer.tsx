@@ -2,6 +2,13 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf';
 import { fabric } from 'fabric';
 import styled from 'styled-components';
+import {
+  Signature,
+  addSignature,
+  selectSignature,
+  updateSignature,
+} from '@/features/signatureSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 type Props = {
   file?: Uint8Array;
@@ -12,10 +19,8 @@ function FileViewer({ file }: Props) {
   const [pageNum, setPageNum] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const fabricRef = useRef<fabric.Canvas>();
-
-  const saveSignatureImage = useCallback((e: fabric.IEvent<MouseEvent>) => {
-    console.log(e);
-  }, []);
+  const dispatch = useAppDispatch();
+  const signatureArray = useAppSelector(selectSignature);
 
   const loadSignatureImage = useCallback(
     (e: fabric.IEvent<MouseEvent>) => {
@@ -32,8 +37,28 @@ function FileViewer({ file }: Props) {
       fabricRef.current?.on('object:added', saveSignatureImage);
       fabricRef.current?.on('object:modified', saveSignatureImage);
       fabricRef.current?.add(image);
+
+      function saveSignatureImage(e: fabric.IEvent<MouseEvent>) {
+        if (!e.target || !(e.target instanceof fabric.Image)) return;
+        if (!e.target.cacheKey) return;
+
+        const id = e.target.cacheKey;
+        const signature: Signature = {
+          id,
+          file: e.target.toDataURL({ format: 'png' }) || '',
+          pageNumber: pageNum,
+          rotation: e.target.angle || 0,
+        };
+        console.log(signatureArray);
+        const index = signatureArray.findIndex((item) => item.id === id);
+        if (index >= 0) {
+          dispatch(updateSignature({ signature, index }));
+          return;
+        }
+        dispatch(addSignature(signature));
+      }
     },
-    [saveSignatureImage]
+    [dispatch, pageNum, signatureArray]
   );
 
   const renderPDF = useCallback(async () => {

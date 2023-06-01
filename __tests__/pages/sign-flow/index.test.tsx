@@ -38,7 +38,11 @@ describe('sign-flow page', () => {
     const user = userEvent.setup();
     const testStore = setupTestStore({
       progress: progressInitialState,
-      signature: { rawFile: toBase64(samplePdf), signedFile: null },
+      signature: {
+        rawFile: toBase64(samplePdf),
+        signedFile: null,
+        signature: [],
+      },
     });
     render(
       <Provider store={testStore}>

@@ -1,13 +1,18 @@
 import { RootState } from '@/store/store';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-type FileType = string | null;
-type Signature = {
+export type FileType = string | null;
+export type Signature = {
   id: string;
   file: string;
   pageNumber: number;
-  x: number;
-  y: number;
+  // top: number;
+  // left: number;
+  // width: number;
+  // height: number;
+  // scaleX: number;
+  // scaleY: number;
+  rotation: number;
 };
 
 // signature state type
@@ -15,6 +20,11 @@ export interface SignatureState {
   rawFile: FileType;
   signedFile: FileType;
   signature: Signature[];
+}
+
+export interface SelectedSignature {
+  signature: Signature;
+  index: number;
 }
 
 const initialState: SignatureState = {
@@ -35,13 +45,19 @@ export const signatureSlice = createSlice({
     },
     addSignature: (state, action: PayloadAction<Signature>) => {
       state.signature.push(action.payload);
-      return { ...state };
+    },
+    updateSignature: (state, action: PayloadAction<SelectedSignature>) => {
+      state.signature[action.payload.index] = action.payload.signature;
     },
   },
 });
 
-export const { saveUploadedFile, saveSignedFile, addSignature } =
-  signatureSlice.actions;
+export const {
+  saveUploadedFile,
+  saveSignedFile,
+  addSignature,
+  updateSignature,
+} = signatureSlice.actions;
 export const selectRawFile = (state: RootState) => state.signature.rawFile;
 export const selectSignedFile = (state: RootState) =>
   state.signature.signedFile;
