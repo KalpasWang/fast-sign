@@ -19,18 +19,13 @@ export type Signature = {
 export interface SignatureState {
   rawFile: FileType;
   signedFile: FileType;
-  signature: Signature[];
-}
-
-export interface SelectedSignature {
-  signature: Signature;
-  index: number;
+  signatures: Signature[];
 }
 
 const initialState: SignatureState = {
   rawFile: null,
   signedFile: null,
-  signature: [],
+  signatures: [],
 };
 
 export const signatureSlice = createSlice({
@@ -43,24 +38,25 @@ export const signatureSlice = createSlice({
     saveSignedFile: (state, action: PayloadAction<FileType>) => {
       return { ...state, signedFile: action.payload };
     },
-    addSignature: (state, action: PayloadAction<Signature>) => {
-      state.signature.push(action.payload);
-    },
-    updateSignature: (state, action: PayloadAction<SelectedSignature>) => {
-      state.signature[action.payload.index] = action.payload.signature;
+    updateSignatureArray: (state, action: PayloadAction<Signature>) => {
+      const idx = state.signatures.findIndex(
+        (signature) => signature.id === action.payload.id
+      );
+      if (idx >= 0) {
+        state.signatures[idx] = action.payload;
+        return;
+      }
+      state.signatures.push(action.payload);
     },
   },
 });
 
-export const {
-  saveUploadedFile,
-  saveSignedFile,
-  addSignature,
-  updateSignature,
-} = signatureSlice.actions;
+export const { saveUploadedFile, saveSignedFile, updateSignatureArray } =
+  signatureSlice.actions;
 export const selectRawFile = (state: RootState) => state.signature.rawFile;
 export const selectSignedFile = (state: RootState) =>
   state.signature.signedFile;
-export const selectSignature = (state: RootState) => state.signature.signature;
+export const selectSignatures = (state: RootState) =>
+  state.signature.signatures;
 
 export default signatureSlice.reducer;

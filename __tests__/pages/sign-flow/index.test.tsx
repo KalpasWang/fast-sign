@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -41,7 +41,7 @@ describe('sign-flow page', () => {
       signature: {
         rawFile: toBase64(samplePdf),
         signedFile: null,
-        signature: [],
+        signatures: [],
       },
     });
     render(

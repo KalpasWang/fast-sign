@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useAppSelector } from '@/store/hooks';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { fromBase64 } from '@/utils/base64';
@@ -7,20 +7,21 @@ import FileViewer from '@/components/FileViewer';
 import SignatureDrawer from '@/components/SignatureDrawer';
 import Dialog from '@/components/Dialog';
 import {
-  saveSignedFile,
+  Signature,
   selectRawFile,
-  selectSignature,
+  selectSignatures,
+  updateSignatureArray,
 } from '@/features/signatureSlice';
-import { useAppDispatch } from '@/store/hooks';
 
 type Props = {};
 
 export default function SignFlow({}: Props) {
   const router = useRouter();
   const rawFile = useAppSelector(selectRawFile);
-  const signature = useAppSelector(selectSignature);
+  const signature = useAppSelector(selectSignatures);
   const [decodedFile, setDecodedFile] = useState<Uint8Array>();
   const [showingModal, setShowingModal] = useState(false);
+  const dispatch = useAppDispatch();
 
   /* if has rawFile, decode string to UInt8Array */
   useEffect(() => {
@@ -28,11 +29,17 @@ export default function SignFlow({}: Props) {
       router.push('/');
       return;
     }
-
     const decoded = fromBase64(rawFile);
     setDecodedFile(decoded);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawFile]);
+
+  const updateSignatures = useCallback(
+    (signature: Signature) => {
+      dispatch(updateSignatureArray(signature));
+    },
+    [dispatch]
+  );
 
   const handleNextStep = useCallback(() => {
     if (!signature) {
@@ -45,7 +52,7 @@ export default function SignFlow({}: Props) {
   return (
     <Container>
       <ViewerContainer>
-        <FileViewer file={decodedFile} />
+        <FileViewer file={decodedFile} onUpdateSignatures={updateSignatures} />
       </ViewerContainer>
       <SignatureContainer>
         <SignatureDrawer />

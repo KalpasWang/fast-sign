@@ -5,7 +5,7 @@ import { samplePdf, samplePdfDataUrl } from '@/utils/samplePDF';
 describe('FileViewer', () => {
   it('渲染 store 中的 pdf 檔案到 canvas', async () => {
     expect.hasAssertions();
-    render(<FileViewer file={samplePdf} />);
+    render(<FileViewer file={samplePdf} onUpdateSignatures={() => {}} />);
 
     const canvas = screen.getByRole('img', {
       name: /pdf viewer/i,
