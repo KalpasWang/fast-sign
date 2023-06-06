@@ -9,13 +9,13 @@ export default function SignatureDrawer({}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const fabricRef = useRef<fabric.Canvas>();
   const [isShowingCanvas, setIsShowingCanvas] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string>();
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   const saveSignature = useCallback(() => {
     if (!fabricRef.current) return;
 
     const img = fabricRef.current.toDataURL();
-    setPreviewUrl(img);
+    setPreviewUrls((arr) => [...arr, img]);
     setIsShowingCanvas(false);
     fabricRef.current.clear();
     fabricRef.current.isDrawingMode = false;
@@ -38,7 +38,7 @@ export default function SignatureDrawer({}: Props) {
 
   const storeImage = useCallback((e: React.DragEvent<HTMLImageElement>) => {
     if (e.target instanceof HTMLImageElement) {
-      window.draggedImage = e.target;
+      window.draggedImage = e.target.cloneNode() as HTMLImageElement;
     }
   }, []);
 
@@ -60,18 +60,22 @@ export default function SignatureDrawer({}: Props) {
           </button>
         </div>
       )}
-      {previewUrl && (
-        <ul style={{ listStyle: 'none' }}>
-          <li>
-            <Image
-              src={previewUrl}
-              alt='簽名檔'
-              width={200}
-              height={100}
-              draggable
-              onDragStart={storeImage}
-            />
-          </li>
+      {previewUrls && (
+        <ul>
+          {previewUrls.map((url, i) => {
+            return (
+              <li key={url}>
+                <Image
+                  src={url}
+                  alt={'簽名檔' + (i + 1)}
+                  width={200}
+                  height={100}
+                  draggable
+                  onDragStart={storeImage}
+                />
+              </li>
+            );
+          })}
         </ul>
       )}
     </Container>
@@ -81,7 +85,7 @@ export default function SignatureDrawer({}: Props) {
 const Container = styled.div`
   width: 100%;
   min-width: 15rem;
-  height: 12rem;
+  /* height: 12rem; */
   margin-top: 2rem;
   background-color: #888;
 `;

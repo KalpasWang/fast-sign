@@ -2,8 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf';
 import { fabric } from 'fabric';
 import styled from 'styled-components';
-import { Signature, selectSignatures } from '@/features/signatureSlice';
-import { useAppSelector } from '@/store/hooks';
+import { Signature } from '@/features/signatureSlice';
 
 type Props = {
   file?: Uint8Array;
@@ -15,8 +14,6 @@ function FileViewer({ file, onUpdateSignatures }: Props) {
   const [pageNum, setPageNum] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const fabricRef = useRef<fabric.Canvas>();
-  const signatures = useAppSelector(selectSignatures);
-  console.log(signatures);
 
   /* fabric canvas 上的事件監聽器，只要簽名檔被拖拉到文件預覽上或有修改時就會執行 */
   const saveSignatureImage = useCallback(
