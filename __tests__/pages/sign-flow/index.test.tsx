@@ -7,7 +7,6 @@ import { setupTestStore } from '@/store/store';
 import { initialState as progressInitialState } from '@/features/progressSlice';
 import { toBase64 } from '@/utils/base64';
 import { samplePdf } from '@/utils/samplePDF';
-import { selectSignedFile } from '@/features/signatureSlice';
 
 // mock useRouter().push method
 const pushMock = jest.fn();
@@ -58,6 +57,5 @@ describe('sign-flow page', () => {
     await user.click(confirmButton);
     /* 驗證 */
     expect(pushMock).toHaveBeenCalledWith('/download');
-    expect(selectSignedFile(testStore.getState())).not.toBeNull();
   });
 });

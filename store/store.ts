@@ -7,6 +7,7 @@ export const store = configureStore({
     progress: progressReducer,
     signature: signatureReducer,
   },
+  devTools: true,
 });
 
 export type AppDispatch = typeof store.dispatch;
