@@ -43,19 +43,19 @@ describe('download page', () => {
         signatures: [sampleSignature],
       },
     });
-    // mock download link
-    const downloadLink = {
-      click: jest.fn(),
-    } as unknown as HTMLAnchorElement;
-    // jest
-    //   .spyOn(document, 'createElement')
-    //   .mockImplementation(() => downloadLink);
 
     render(
       <Provider store={testStore}>
         <Download />
       </Provider>
     );
+
+    // mock document.createElement() to return a stub link
+    const downloadLink = document.createElement('a');
+    downloadLink.click = jest.fn();
+    jest
+      .spyOn(document, 'createElement')
+      .mockImplementation(() => downloadLink);
 
     /* 執行與驗證 */
     const downloadBtn = screen.getByRole('button', { name: /下載檔案/ });
