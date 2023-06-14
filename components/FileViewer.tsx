@@ -24,6 +24,10 @@ function FileViewer({ file, onUpdateSignatures }: Props) {
       const signature: Signature = {
         id,
         file: e.target.toDataURL({ format: 'png' }) || '',
+        x: e.target.left || 0,
+        y: e.target.top || 0,
+        width: e.target.width || window.draggedImage!.width || 0,
+        height: e.target.height || window.draggedImage!.height || 0,
         pageNumber: pageNum,
         rotation: e.target.angle || 0,
       };
