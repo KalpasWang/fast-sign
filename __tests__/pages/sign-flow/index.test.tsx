@@ -1,10 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import SignFlow from '../../../pages/sign-flow';
 import { setupTestStore } from '@/store/store';
 import { initialState as progressInitialState } from '@/features/progressSlice';
+import { initialState as signatureInitialState } from '@/features/signatureSlice';
 import { toBase64 } from '@/utils/base64';
 import { samplePdf } from '@/utils/samplePDF';
 
@@ -38,9 +39,11 @@ describe('sign-flow page', () => {
     const testStore = setupTestStore({
       progress: progressInitialState,
       signature: {
+        pending: false,
         rawFile: toBase64(samplePdf),
-        signedFile: null,
         signatures: [],
+        signedFile: null,
+        error: null,
       },
     });
     render(
@@ -56,6 +59,9 @@ describe('sign-flow page', () => {
     const confirmButton = await screen.findByRole('button', { name: /確認/ });
     await user.click(confirmButton);
     /* 驗證 */
-    expect(pushMock).toHaveBeenCalledWith('/download');
+    await waitFor(() => {
+      expect(testStore.getState().signature.signedFile).not.toBeNull();
+      expect(pushMock).toHaveBeenCalledWith('/download');
+    });
   });
 });

@@ -24,7 +24,7 @@ export interface SignatureState {
   error: string | null;
 }
 
-const initialState: SignatureState = {
+export const initialState: SignatureState = {
   pending: false,
   rawFile: null,
   signedFile: null,
@@ -32,6 +32,7 @@ const initialState: SignatureState = {
   error: null,
 };
 
+// async thunk: add signature to pdf
 export const addSignatureToPdf = createAsyncThunk<
   string,
   void,
@@ -83,6 +84,7 @@ export const signatureSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(addSignatureToPdf.pending, (state) => {
       state.pending = true;
+      state.signedFile = null;
     });
     builder.addCase(addSignatureToPdf.fulfilled, (state, action) => {
       state.pending = false;

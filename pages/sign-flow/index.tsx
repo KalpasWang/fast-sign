@@ -8,8 +8,12 @@ import SignatureDrawer from '@/components/SignatureDrawer';
 import Dialog from '@/components/Dialog';
 import {
   Signature,
+  addSignatureToPdf,
+  selectError,
+  selectPending,
   selectRawFile,
   selectSignatures,
+  selectSignedFile,
   updateSignatureArray,
 } from '@/features/signatureSlice';
 
@@ -21,7 +25,11 @@ export default function SignFlow({}: Props) {
   const signature = useAppSelector(selectSignatures);
   const [decodedFile, setDecodedFile] = useState<Uint8Array>();
   const [showingModal, setShowingModal] = useState(false);
+  const [isOk, setIsOk] = useState(false);
   const dispatch = useAppDispatch();
+  const signedFile = useAppSelector(selectSignedFile);
+  const isPending = useAppSelector(selectPending);
+  const error = useAppSelector(selectError);
 
   /* if has rawFile, decode string to UInt8Array */
   useEffect(() => {
@@ -34,9 +42,17 @@ export default function SignFlow({}: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawFile]);
 
+  // 如果檔案已經送出且有 signedFile，push 到 download 頁面
+  useEffect(() => {
+    if (isOk && signedFile) {
+      router.push('/download');
+    }
+  }, [isOk, router, signedFile]);
+
   const updateSignatures = useCallback(
     (signature: Signature) => {
       dispatch(updateSignatureArray(signature));
+      setIsOk(true);
     },
     [dispatch]
   );
@@ -46,8 +62,9 @@ export default function SignFlow({}: Props) {
       console.error('signature is empty');
       return;
     }
-    router.push('/download');
-  }, [signature, router]);
+    dispatch(addSignatureToPdf());
+    setIsOk(true);
+  }, [signature, dispatch]);
 
   return (
     <Container>
@@ -67,14 +84,18 @@ export default function SignFlow({}: Props) {
           <DialogContentContainer>
             <h2>請確認您的檔案</h2>
             <p>確認後將無法修改</p>
-            <div>
-              <button type='button' onClick={() => handleNextStep()}>
-                確認
-              </button>
-              <button type='button' onClick={() => setShowingModal(false)}>
-                返回
-              </button>
-            </div>
+            {isPending && <p>處程中...</p>}
+            {error && <p>{error}</p>}
+            {!isPending && (
+              <div>
+                <button type='button' onClick={() => handleNextStep()}>
+                  確認
+                </button>
+                <button type='button' onClick={() => setShowingModal(false)}>
+                  返回
+                </button>
+              </div>
+            )}
           </DialogContentContainer>
         </Dialog>
       )}

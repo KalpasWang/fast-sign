@@ -8,7 +8,12 @@ import { initialState as progressInitialState } from '@/features/progressSlice';
 import { toBase64 } from '@/utils/base64';
 import { samplePdf } from '@/utils/samplePDF';
 import { Signature } from '@/features/signatureSlice';
+import { downloadPdf } from '@/utils/download';
 
+// mock downloadjs
+jest.mock('../../utils/download.ts', () => ({
+  downloadPdf: jest.fn(),
+}));
 // mock useRouter().push method
 const pushMock = jest.fn();
 jest.mock('next/router', () => ({
@@ -41,7 +46,7 @@ describe('download page', () => {
       signature: {
         pending: false,
         rawFile: toBase64(samplePdf),
-        signedFile: null,
+        signedFile: toBase64(samplePdf),
         signatures: [sampleSignature],
         error: null,
       },
@@ -53,20 +58,13 @@ describe('download page', () => {
       </Provider>
     );
 
-    // mock document.createElement() to return a stub link
-    const downloadLink = document.createElement('a');
-    downloadLink.click = jest.fn();
-    jest
-      .spyOn(document, 'createElement')
-      .mockImplementation(() => downloadLink);
-
     /* 執行與驗證 */
-    const downloadBtn = await screen.findByRole('button', { name: /下載檔案/ });
-    await user.click(downloadBtn);
-    expect(downloadLink.click).toHaveBeenCalled();
-    const backHomeBtn = await screen.findByRole('button', { name: /回到首頁/ });
-    await user.click(backHomeBtn);
-    expect(pushMock).toHaveBeenCalledWith('/');
+    // 驗證可以回首頁
+    const backHomeLink = screen.getByRole('link', { name: /回到首頁/ });
+    expect(backHomeLink).toHaveAttribute('href', '/');
+    // 驗證可以下載檔案
+    await user.click(screen.getByRole('button', { name: /下載檔案/ }));
+    expect(downloadPdf).toHaveBeenCalledTimes(1);
   });
 });
 
