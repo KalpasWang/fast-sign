@@ -49,7 +49,7 @@ export const addSignatureToPdf = createAsyncThunk<
     const { x, y, width, height, rotation } = signature;
     page.drawImage(image, {
       x,
-      y,
+      y: page.getHeight() - y - height,
       width,
       height,
       rotate: degrees(rotation),

@@ -5,8 +5,6 @@ import '@testing-library/jest-dom';
 import SignFlow from '../../../pages/sign-flow';
 import { setupTestStore } from '@/store/store';
 import { initialState as progressInitialState } from '@/features/progressSlice';
-import { initialState as signatureInitialState } from '@/features/signatureSlice';
-import { toBase64 } from '@/utils/base64';
 import { samplePdf } from '@/utils/samplePDF';
 
 // mock useRouter().push method
@@ -40,7 +38,7 @@ describe('sign-flow page', () => {
       progress: progressInitialState,
       signature: {
         pending: false,
-        rawFile: toBase64(samplePdf),
+        rawFile: samplePdf,
         signatures: [],
         signedFile: null,
         error: null,
