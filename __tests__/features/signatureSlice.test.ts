@@ -16,10 +16,7 @@ describe('signatureSlice', () => {
         signature: signatureInitialState,
       });
 
-      /* 執行 */
-      // const result = await testStore.dispatch(addSignatureToPdf()).unwrap();
-      /* 驗證 */
-      // expect(result).toBe('錯誤：沒有 rawFile');
+      /* 執行與驗證 */
       await expect(testStore.dispatch(addSignatureToPdf())).resolves.toEqual(
         expect.objectContaining({
           payload: expect.stringContaining('錯誤：沒有 rawFile'),
@@ -28,8 +25,8 @@ describe('signatureSlice', () => {
       );
     });
 
-    it.skip('可以將簽名檔加入到 PDF', async () => {
-      expect.hasAssertions();
+    it('可以將簽名檔加入到 PDF', async () => {
+      expect.assertions(2);
       /* 準備 */
       const testStore = setupTestStore({
         progress: progressInitialState,
@@ -45,12 +42,16 @@ describe('signatureSlice', () => {
       /* 執行 */
       const result = await testStore.dispatch(addSignatureToPdf()).unwrap();
       /* 驗證 */
-      const expected = fromBase64(sampleSignedPdf);
-      const decodedBytes = fromBase64(result);
-      decodedBytes.forEach((byte, i) => {
-        expect(byte).toBeGreaterThanOrEqual(expected[i] - 10);
-        expect(byte).toBeLessThanOrEqual(expected[i] + 10);
-      });
+      const expectPdfDoc = await PDFDocument.load(sampleSignedPdf);
+      const receivePdfDoc = await PDFDocument.load(result);
+      expect(receivePdfDoc.getPages().length).toBe(
+        expectPdfDoc.getPages().length
+      );
+      const receivePdfPage = receivePdfDoc.getPage(0) as any;
+      const expectPdfPage = expectPdfDoc.getPage(0) as any;
+      expect(receivePdfPage.getContentStream().operators).toEqual(
+        expectPdfPage.getContentStream().operators
+      );
     });
   });
 });

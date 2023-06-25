@@ -30,7 +30,7 @@ describe('sign-flow page', () => {
   });
 
   it('點擊完成會跳出 alert，點擊確認會跳到下載頁面', async () => {
-    expect.hasAssertions();
+    expect.assertions(2);
     /* 準備 */
     // use default sample pdf file to setup store
     const user = userEvent.setup();

@@ -35,7 +35,7 @@ describe('download page', () => {
   });
 
   it('點擊下載檔案可以下載 pdf 檔，點擊回到首頁返回首頁', async () => {
-    expect.hasAssertions();
+    expect.assertions(2);
     /* 準備 */
     // use default sample pdf file to setup store
     const user = userEvent.setup();
