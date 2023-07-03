@@ -149,6 +149,7 @@ function FileViewer({ file, onUpdateSignatures }: Props) {
       <div>
         <button
           type='button'
+          id='prev-page'
           onClick={() => {
             setPageNum((prevPageNum) => prevPageNum - 1);
           }}
@@ -156,11 +157,12 @@ function FileViewer({ file, onUpdateSignatures }: Props) {
         >
           上一頁
         </button>
-        <span>
+        <span id='page-number' role='status' aria-label='page number'>
           {pageNum} / {totalPages}
         </span>
         <button
           type='button'
+          id='next-page'
           onClick={() => {
             setPageNum((prevPageNum) => prevPageNum + 1);
           }}

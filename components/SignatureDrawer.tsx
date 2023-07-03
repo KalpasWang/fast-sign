@@ -44,7 +44,11 @@ export default function SignatureDrawer({}: Props) {
 
   return (
     <Container ref={containerRef}>
-      <button type='button' onClick={() => setIsShowingCanvas(true)}>
+      <button
+        type='button'
+        id='create-signature'
+        onClick={() => setIsShowingCanvas(true)}
+      >
         創建簽名檔
       </button>
       {isShowingCanvas && (
