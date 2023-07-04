@@ -17,10 +17,13 @@ describe('fast-sign with pdf file', () => {
 
     cy.get('button#create-signature').click();
     cy.get('canvas#sign-canvas').should('be.visible');
-    cy.get('canvas#sign-canvas')
-      .trigger('mousedown', 'center', { force: true })
-      .trigger('mousemove', { clientX: 100, clientY: 100 })
-      .trigger('mouseup', { force: true })
-      .trigger('mouseleave');
+    cy.get('canvas.upper-canvas')
+      .last()
+      .trigger('mousedown', 'bottom')
+      .trigger('mousemove', 'top')
+      .trigger('mouseup')
+      .trigger('mousedown', 'left')
+      .trigger('mousemove', 'right')
+      .trigger('mouseup');
   });
 });
