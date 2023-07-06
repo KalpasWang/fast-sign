@@ -52,7 +52,7 @@ function FileViewer({ file, onUpdateSignatures }: Props) {
 
   /* 把簽名檔轉為 canvas image 的事件處理器 */
   const addSignatureToCanvas = useCallback((e: fabric.IEvent<MouseEvent>) => {
-    if (!window.draggedImage) return;
+    if (!(window.draggedImage instanceof HTMLImageElement)) return;
     if (!fabricRef.current) return;
     const { offsetX, offsetY } = e.e;
     const imageScale = 1 / window.devicePixelRatio;
@@ -63,6 +63,8 @@ function FileViewer({ file, onUpdateSignatures }: Props) {
       left: offsetX - (window.draggedImage.width * imageScale) / 2,
     });
     fabricRef.current.add(image);
+    fabricRef.current.renderAll();
+    console.log('fabricRef', fabricRef.current);
   }, []);
 
   const renderPDF = useCallback(async () => {

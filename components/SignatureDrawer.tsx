@@ -59,7 +59,11 @@ export default function SignatureDrawer({}: Props) {
             role='img'
             title='簽名畫布'
           />
-          <button type='button' onClick={() => saveSignature()}>
+          <button
+            type='button'
+            id='save-signature'
+            onClick={() => saveSignature()}
+          >
             儲存
           </button>
         </div>
@@ -70,6 +74,7 @@ export default function SignatureDrawer({}: Props) {
             return (
               <li key={url}>
                 <Image
+                  id={'signature-preview' + (i + 1)}
                   src={url}
                   alt={'簽名檔' + (i + 1)}
                   width={200}
