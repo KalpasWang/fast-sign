@@ -33,11 +33,22 @@ describe('fast-sign with pdf file', () => {
 
     // 拖移簽名檔到 pdf canvas
     cy.get('img#signature-preview1').trigger('dragstart', 'topLeft');
+    cy.get('img#signature-preview1').trigger('mousedown', 'topLeft');
     cy.window().should('have.property', 'draggedImage');
-    cy.get('canvas.upper-canvas').trigger('drop', 'topLeft', {
+    cy.get('img#signature-preview1').trigger('mousemove', {
+      clientX: -400,
+      clientY: 0,
+    });
+    cy.get('img#signature-preview1').trigger('mouseup');
+    // cy.get('img#signature-preview1').trigger('drop', {
+    //   screenX: 0,
+    //   screenY: 0,
+    // });
+
+    cy.get('canvas.upper-canvas').trigger('drop', {
       force: true,
     });
-    cy.wait(5000);
+    cy.wait(1000);
     cy.get('canvas.upper-canvas')
       .trigger('mousemove', 'topLeft')
       .should('have.css', 'cursor', 'move');
