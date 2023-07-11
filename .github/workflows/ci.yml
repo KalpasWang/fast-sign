@@ -1,10 +1,10 @@
-name: CI CD
+name: CI/CD
 on:
   push:
     # branches:
     #   - main
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: checkout this repo
@@ -34,3 +34,13 @@ jobs:
         with:
           name: test-report
           path: test.json
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
