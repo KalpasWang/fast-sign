@@ -21,7 +21,7 @@ export default function Download({}: Props) {
 
   const downloadFile = useCallback(async () => {
     if (!signedFile) return;
-    downloadPdf(signedFile, 'signed.pdf');
+    downloadPdf(signedFile, 'signed-file.pdf');
   }, [signedFile]);
 
   return (

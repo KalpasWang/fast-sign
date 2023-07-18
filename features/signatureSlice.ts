@@ -40,9 +40,7 @@ export const addSignatureToPdf = createAsyncThunk<
 >('signature/addSignatureToPdf', async (_, thunkApi) => {
   const { rawFile, signatures } = thunkApi.getState().signature;
   if (!rawFile) return thunkApi.rejectWithValue('錯誤：沒有 rawFile');
-
   const pdfDoc = await PDFDocument.load(rawFile);
-
   signatures.forEach(async (signature) => {
     const image = await pdfDoc.embedPng(signature.file);
     const page = pdfDoc.getPage(signature.pageNumber - 1);
