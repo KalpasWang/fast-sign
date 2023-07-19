@@ -1,8 +1,13 @@
 name: deploy to vercel
 on:
-  pull_request_review:
+  push:
+    branches:
+      - main
+  pull_request:
     types:
-      - 'submitted'
+      - closed
+    branches:
+      - main
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -10,7 +15,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.base.ref == 'main'
+    if: github.event.pull_request.merged == 'true'
     steps:
       - uses: actions/checkout@v3
 
