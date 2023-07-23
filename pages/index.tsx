@@ -37,7 +37,7 @@ export default function Home() {
       <header>
         <Image width={96} height={48} src='/assets/logo.svg' alt='logo' />
         <h1>快速省時的電子簽署工具</h1>
-        <div>b</div>
+        <div className='text-h1 bg-slate-500'>Test</div>
       </header>
       <main>
         {isUploaded && <p>上傳成功</p>}

@@ -15,7 +15,61 @@ module.exports = {
         '2xl': '1400px',
       },
     },
+    fontFamily: {
+      sans: 'Noto Sans TC, sans-serif',
+    },
     extend: {
+      fontSize: {
+        h1: [
+          '2rem',
+          {
+            lineHeight: '3rem',
+            fontWeight: '700',
+          },
+        ],
+        h2: [
+          '1.5rem',
+          {
+            lineHeight: '2rem',
+            fontWeight: '700',
+          },
+        ],
+        h3: [
+          '1.125rem',
+          {
+            lineHeight: '1.625rem',
+            fontWeight: '700',
+          },
+        ],
+        h4: [
+          '1rem',
+          {
+            lineHeight: '1.5rem',
+            fontWeight: '700',
+          },
+        ],
+        h5: [
+          '0.875rem',
+          {
+            lineHeight: '1.375rem',
+            fontWeight: '700',
+          },
+        ],
+        h6: [
+          '0.75rem',
+          {
+            lineHeight: '1.25rem',
+            fontWeight: '700',
+          },
+        ],
+        p: [
+          '0.875rem',
+          {
+            lineHeight: '1.375rem',
+            fontWeight: '400',
+          },
+        ],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
