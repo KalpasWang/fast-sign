@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import Image from 'next/image';
 import { Inter } from 'next/font/google';
 import FileUploader from '@/components/FileUploader';
 import { useEffect, useState } from 'react';
@@ -7,6 +6,7 @@ import { useRouter } from 'next/router';
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf';
 import { useAppDispatch } from '../store/hooks';
 import { saveUploadedFile } from '@/features/signatureSlice';
+import MainLayout from '@/components/MainLayout';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -34,15 +34,10 @@ export default function Home() {
       <Head>
         <title>快點簽 Fast-Sign</title>
       </Head>
-      <header>
-        <Image width={96} height={48} src='/assets/logo.svg' alt='logo' />
-        <h1>快速省時的電子簽署工具</h1>
-        <div className='text-h1 bg-slate-500'>Test</div>
-      </header>
-      <main>
+      <MainLayout>
         {isUploaded && <p>上傳成功</p>}
         <FileUploader onUpload={uploadHandler} />
-      </main>
+      </MainLayout>
     </>
   );
 }
